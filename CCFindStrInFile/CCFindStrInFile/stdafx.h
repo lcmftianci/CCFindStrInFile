@@ -24,6 +24,8 @@
 
 #define MSG_SHOW_MSG WM_USER+8
 
+#include <shlobj.h>
+
 
 
 #ifndef _AFX_NO_OLE_SUPPORT

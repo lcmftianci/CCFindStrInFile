@@ -19,6 +19,40 @@ std::string GetFileDirectory(std::string strFilePath)
 	return strFileDir;
 }
 
+//写入文件，保存桌面弹出
+int DisInFile(std::vector<std::string> arrSrcPath)
+{
+	TCHAR MyDir[_MAX_PATH];
+	SHGetSpecialFolderPath(theApp.GetMainWnd()->m_hWnd, MyDir, CSIDL_DESKTOP, 0);
+	std::string strFile = "";
+	sprintf(const_cast<char*>(strFile.c_str()), "%s", MyDir);
+	strFile += "\\result.txt";
+	//FILE* fp = fopen(strFile.c_str(), "wt");
+	//if (fp == NULL)
+	//	AfxMessageBox(_T("Open File Error in read Result"));
+	
+	if (arrSrcPath.size() <= 0)
+	{
+		AfxMessageBox(_T("No File"));
+		return 0;
+	}
+
+
+	//write file
+	AllocConsole();
+	freopen(strFile.c_str(), "wt", stdout);
+	std::vector<std::string>::iterator iter = arrSrcPath.begin();
+	for (; iter != arrSrcPath.end(); iter++)
+	{
+		printf("%s\n", iter->data());
+	}
+	fclose(stdout);
+	FreeConsole();
+	std::string strCmd = "notepad.exe ";
+	strCmd += strFile;
+	WinExec(strCmd.c_str(), SW_SHOW);
+	return (int)arrSrcPath.size();
+}
 
 //便利穿入的文件夹将所有文件路径输出
 void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath)
@@ -56,4 +90,35 @@ void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath
 		arrFilepath.push_back(strFilePaths);
 	}
 	return;
+}
+
+
+//查找字符串
+bool FindString(std::string strData, std::string strFilePath)
+{
+	//打开文件,查找字符串，关闭文件返回值
+	FILE* fp = fopen(strFilePath.c_str(), "rt");
+	if (fp == NULL)
+		return false;
+
+	//查找字符串
+	char chValue[2048] = "";
+	while (!feof(fp))
+	{
+		fgets(chValue, 2047, fp);
+		if (strstr(chValue, strData.c_str()) != NULL)
+			return true;
+	}
+	return false;
+}
+
+void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> arrSrcPath, std::string strStrFind)
+{
+	//查找字符串并将存在相应字符串的文件写入到写入到指定字符数组
+	std::vector<std::string>::iterator iter = arrSrcPath.begin();
+	for (; iter != arrSrcPath.end(); iter++)
+	{
+		if (FindString(strStrFind, iter->data()))
+			arrDesPath.push_back(iter->data());
+	}
 }
