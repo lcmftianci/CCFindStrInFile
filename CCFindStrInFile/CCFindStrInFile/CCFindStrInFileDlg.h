@@ -4,6 +4,12 @@
 
 #pragma once
 #include "afxwin.h"
+#include <vector>
+
+struct StruPath {
+	std::vector<std::string> m_arrFilePath;
+	std::vector<std::string> m_arrExistPath;
+};
 
 
 // CCCFindStrInFileDlg dialog
@@ -33,8 +39,17 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedBtnOpenfoleder();
 	CEdit m_Dir;
 	CEdit m_Str;
+	CString m_strDir;
+	CString m_strInd;
+
+	StruPath m_StruPath;
+	afx_msg void OnBnClickedFind();
+	CStatic m_ShowStr;
+
+	afx_msg LRESULT ShowMsg(WPARAM wParam, LPARAM lParam);
+
+	static LRESULT ReverseThread(LPVOID lpvoid);
 };

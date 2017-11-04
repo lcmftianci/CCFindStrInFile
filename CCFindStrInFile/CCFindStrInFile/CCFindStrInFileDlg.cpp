@@ -6,6 +6,11 @@
 #include "CCFindStrInFile.h"
 #include "CCFindStrInFileDlg.h"
 #include "afxdialogex.h"
+#include <iostream>
+
+#include "filenameos.h"
+
+using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -60,6 +65,7 @@ void CCCFindStrInFileDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT_PATH, m_Dir);
 	DDX_Control(pDX, IDC_EDIT_STR, m_Str);
+	DDX_Control(pDX, IDC_PROGRESS, m_ShowStr);
 }
 
 BEGIN_MESSAGE_MAP(CCCFindStrInFileDlg, CDialogEx)
@@ -67,6 +73,8 @@ BEGIN_MESSAGE_MAP(CCCFindStrInFileDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_OPENFOLEDER, &CCCFindStrInFileDlg::OnBnClickedBtnOpenfoleder)
+	ON_BN_CLICKED(IDFIND, &CCCFindStrInFileDlg::OnBnClickedFind)
+	ON_MESSAGE(MSG_SHOW_MSG, &CCCFindStrInFileDlg::ShowMsg)
 END_MESSAGE_MAP()
 
 
@@ -158,7 +166,67 @@ HCURSOR CCCFindStrInFileDlg::OnQueryDragIcon()
 }
 
 
+//start find str file
 void CCCFindStrInFileDlg::OnBnClickedBtnOpenfoleder()
 {
 	// TODO: Add your control notification handler code here
+	//打开文件夹
+#define MAX_CFileDialog_FILE_COUNT 99
+#define FILE_LIST_BUFFER_SIZE ((MAX_CFileDialog_FILE_COUNT * (MAX_PATH + 1)) + 1)
+
+	CString fileName;
+	wchar_t* p = fileName.GetBuffer(FILE_LIST_BUFFER_SIZE);
+	CFileDialog dlgFile(TRUE);
+	OPENFILENAME& ofn = dlgFile.GetOFN();
+	ofn.Flags |= OFN_ALLOWMULTISELECT;
+	ofn.lpstrFile = p;
+	ofn.nMaxFile = FILE_LIST_BUFFER_SIZE;
+
+	dlgFile.DoModal();
+	m_strDir = ofn.lpstrFile;
+	m_Dir.SetWindowText(m_strDir);
+	fileName.ReleaseBuffer();
+	m_ShowStr.SetWindowText(m_strDir);
+}
+
+//find str
+void CCCFindStrInFileDlg::OnBnClickedFind()
+{
+	// TODO: Add your control notification handler code here
+	m_Str.GetWindowText(m_strInd);
+	USES_CONVERSION;
+	string strFileStr = W2A(m_strInd.GetBuffer());
+	if (strFileStr == "")
+	{
+		MessageBox(_T("字符串为空,请重新输入！"), _T("提示"), MB_OK);
+		return;
+	}
+	string strFilePath = W2A(m_strDir.GetBuffer());
+	if (strFilePath == "")
+	{
+		MessageBox(_T("文件路径为空,请重新选择！"), _T("提示"), MB_OK);
+		return;
+	}
+	
+	HANDLE hThread;
+	DWORD ThreadID;
+	hThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)ReverseThread, (LPVOID)this, 0,&ThreadID);
+}
+
+
+//打印字符串
+LRESULT CCCFindStrInFileDlg::ShowMsg(WPARAM wParam, LPARAM lParam)
+{
+	CString* strPath = (CString*)lParam;
+	m_ShowStr.SetWindowText(*strPath);
+	return 0;
+}
+
+LRESULT CCCFindStrInFileDlg::ReverseThread(LPVOID lpvoid)
+{
+	CCCFindStrInFileDlg* pDlg = (CCCFindStrInFileDlg*)lpvoid;
+	USES_CONVERSION;
+	string strFilePath = W2A(pDlg->m_strDir.GetBuffer());
+	ReverseDirectory(strFilePath, pDlg->m_StruPath.m_arrFilePath);
+	return 0;
 }

@@ -22,6 +22,8 @@
 
 #include <afxdisp.h>        // MFC Automation classes
 
+#define MSG_SHOW_MSG WM_USER+8
+
 
 
 #ifndef _AFX_NO_OLE_SUPPORT
