@@ -119,6 +119,9 @@ void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> a
 	for (; iter != arrSrcPath.end(); iter++)
 	{
 		if (FindString(strStrFind, iter->data()))
+		{
 			arrDesPath.push_back(iter->data());
+			::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)((*iter).c_str()));
+		}	
 	}
 }
