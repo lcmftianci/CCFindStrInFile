@@ -13,13 +13,13 @@ std::string GetFileDirectory(std::string strFilePath)
 
 	_splitpath(strFilePath.c_str(), drive, dir, fname, ext);
 
-	//ºÏ³ÉÂ·¾¶·µ»ØÈ¥
+	//åˆæˆè·¯å¾„è¿”å›å»
 	std::string strFileDir = drive;
 	strFileDir += dir;
 	return strFileDir;
 }
 
-//Ğ´ÈëÎÄ¼ş£¬±£´æ×ÀÃæµ¯³ö
+//å†™å…¥æ–‡ä»¶ï¼Œä¿å­˜æ¡Œé¢å¼¹å‡º
 int DisInFile(std::vector<std::string> arrSrcPath)
 {
 	TCHAR MyDir[_MAX_PATH];
@@ -54,14 +54,14 @@ int DisInFile(std::vector<std::string> arrSrcPath)
 	return (int)arrSrcPath.size();
 }
 
-//±ãÀû´©ÈëµÄÎÄ¼ş¼Ğ½«ËùÓĞÎÄ¼şÂ·¾¶Êä³ö
+//ä¾¿åˆ©ç©¿å…¥çš„æ–‡ä»¶å¤¹å°†æ‰€æœ‰æ–‡ä»¶è·¯å¾„è¾“å‡º
 void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath)
 {
-	//´«ÈëµÄÎÄ¼ş¼Ğ
+	//ä¼ å…¥çš„æ–‡ä»¶å¤¹
 	CFileFind finder;
-	//const char*×ª»»³ÉLPCTSTRÎÄ¼ş
-	//ÕâÀï±¾À´»ñÈ¡µÄÊÇÒ»¸öÎÄ¼şÂ·¾¶
-	//¸ù¾İÎÄ¼şÂ·¾¶ÕÒµ½ËùÔÚÄ¿Â¼
+	//const char*è½¬æ¢æˆLPCTSTRæ–‡ä»¶
+	//è¿™é‡Œæœ¬æ¥è·å–çš„æ˜¯ä¸€ä¸ªæ–‡ä»¶è·¯å¾„
+	//æ ¹æ®æ–‡ä»¶è·¯å¾„æ‰¾åˆ°æ‰€åœ¨ç›®å½•
 	std::string strFilePathG = GetFileDirectory(strPath);
 	strFilePathG += "*.*";
 
@@ -93,28 +93,36 @@ void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath
 }
 
 
-//²éÕÒ×Ö·û´®
+//æŸ¥æ‰¾å­—ç¬¦ä¸²
 bool FindString(std::string strData, std::string strFilePath)
 {
-	//´ò¿ªÎÄ¼ş,²éÕÒ×Ö·û´®£¬¹Ø±ÕÎÄ¼ş·µ»ØÖµ
+	//æ‰“å¼€æ–‡ä»¶,æŸ¥æ‰¾å­—ç¬¦ä¸²ï¼Œå…³é—­æ–‡ä»¶è¿”å›å€¼
 	FILE* fp = fopen(strFilePath.c_str(), "rt");
 	if (fp == NULL)
+{
+fclose(fp);
 		return false;
+}
 
-	//²éÕÒ×Ö·û´®
+	//æŸ¥æ‰¾å­—ç¬¦ä¸²
 	char chValue[2048] = "";
 	while (!feof(fp))
 	{
 		fgets(chValue, 2047, fp);
 		if (strstr(chValue, strData.c_str()) != NULL)
+{
+fclose(fp);
 			return true;
+}
 	}
+
+fclose(fp);
 	return false;
 }
 
 void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> arrSrcPath, std::string strStrFind)
 {
-	//²éÕÒ×Ö·û´®²¢½«´æÔÚÏàÓ¦×Ö·û´®µÄÎÄ¼şĞ´Èëµ½Ğ´Èëµ½Ö¸¶¨×Ö·ûÊı×é
+	//æŸ¥æ‰¾å­—ç¬¦ä¸²å¹¶å°†å­˜åœ¨ç›¸åº”å­—ç¬¦ä¸²çš„æ–‡ä»¶å†™å…¥åˆ°å†™å…¥åˆ°æŒ‡å®šå­—ç¬¦æ•°ç»„
 	std::vector<std::string>::iterator iter = arrSrcPath.begin();
 	for (; iter != arrSrcPath.end(); iter++)
 	{
