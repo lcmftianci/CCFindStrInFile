@@ -100,7 +100,7 @@ bool FindString(std::string strData, std::string strFilePath)
 	FILE* fp = fopen(strFilePath.c_str(), "rt");
 	if (fp == NULL)
 {
-fclose(fp);
+//fclose(fp);  打开文件失败时不能关文件，不能和java一样
 		return false;
 }
 
