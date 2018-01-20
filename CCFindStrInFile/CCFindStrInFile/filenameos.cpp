@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #define _CRT_SECURE_NO_WARNINGS
+
+#include "stdafx.h"
 #include "filenameos.h"
 #include "CCFindStrInFile.h"
 
@@ -125,13 +126,18 @@ void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> a
 {
 	//鏌ユ壘瀛楃涓插苟灏嗗瓨鍦ㄧ浉搴斿瓧绗︿覆鐨勬枃浠跺啓鍏ュ埌鍐欏叆鍒版寚瀹氬瓧绗︽暟缁?
 	std::vector<std::string>::iterator iter = arrSrcPath.begin();
+	USES_CONVERSION;
+	char* chMsg;
+	std::string strDif;
+	CString strMsg;
 	for (; iter != arrSrcPath.end(); iter++)
 	{
-		std::string strDif = "正在解析-->";
-		strDif += *iter;
-		char* chMsg = const_cast<char*>(strDif.c_str());
-		//CString strMsg = chMsg;
-		::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)(&chMsg));
+		//这里发送消息有点问题，大量数据是崩溃
+		/*	strDif = "正在解析-->";
+			strDif += *iter;
+			chMsg = const_cast<char*>(strDif.c_str());
+			strMsg = A2W(chMsg);
+			::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)(&strMsg));*/
 		if (FindString(strStrFind, iter->data()))
 		{
 			arrDesPath.push_back(iter->data());
