@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#define _CRT_SECURE_NO_WARNINGS
 #include "filenameos.h"
 #include "CCFindStrInFile.h"
 
@@ -107,8 +108,13 @@ bool FindString(std::string strData, std::string strFilePath)
 	{
 		fgets(chValue, 2047, fp);
 		if (strstr(chValue, strData.c_str()) != NULL)
+		{
+			fclose(fp);
 			return true;
+		}
 	}
+
+	fclose(fp);
 	return false;
 }
 
@@ -118,10 +124,12 @@ void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> a
 	std::vector<std::string>::iterator iter = arrSrcPath.begin();
 	for (; iter != arrSrcPath.end(); iter++)
 	{
+		std::string strDif = "ÕýÔÚ½âÎö-->";
+		strDif += *iter;
+		::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)(strDif.c_str()));
 		if (FindString(strStrFind, iter->data()))
 		{
 			arrDesPath.push_back(iter->data());
-			::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)((*iter).c_str()));
 		}	
 	}
 }
