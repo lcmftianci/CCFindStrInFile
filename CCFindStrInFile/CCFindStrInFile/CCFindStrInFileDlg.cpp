@@ -231,5 +231,7 @@ LRESULT CCCFindStrInFileDlg::ReverseThread(LPVOID lpvoid)
 	string strFileStr = W2A(pDlg->m_strInd.GetBuffer());
 	FindString(pDlg->m_StruPath.m_arrExistPath, pDlg->m_StruPath.m_arrFilePath, strFileStr);
 	DisInFile(pDlg->m_StruPath.m_arrExistPath);
+	pDlg->m_StruPath.m_arrExistPath.clear();
+	pDlg->m_StruPath.m_arrFilePath.clear();
 	return 0;
 }

@@ -14,13 +14,13 @@ std::string GetFileDirectory(std::string strFilePath)
 
 	_splitpath(strFilePath.c_str(), drive, dir, fname, ext);
 
-	//ºÏ³ÉÂ·¾¶·µ»ØÈ¥
+	//åˆæˆè·¯å¾„è¿”å›žåŽ?
 	std::string strFileDir = drive;
 	strFileDir += dir;
 	return strFileDir;
 }
 
-//Ð´ÈëÎÄ¼þ£¬±£´æ×ÀÃæµ¯³ö
+//å†™å…¥æ–‡ä»¶ï¼Œä¿å­˜æ¡Œé¢å¼¹å‡?
 int DisInFile(std::vector<std::string> arrSrcPath)
 {
 	TCHAR MyDir[_MAX_PATH];
@@ -55,14 +55,14 @@ int DisInFile(std::vector<std::string> arrSrcPath)
 	return (int)arrSrcPath.size();
 }
 
-//±ãÀû´©ÈëµÄÎÄ¼þ¼Ð½«ËùÓÐÎÄ¼þÂ·¾¶Êä³ö
+//ä¾¿åˆ©ç©¿å…¥çš„æ–‡ä»¶å¤¹å°†æ‰€æœ‰æ–‡ä»¶è·¯å¾„è¾“å‡?
 void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath)
 {
-	//´«ÈëµÄÎÄ¼þ¼Ð
+	//ä¼ å…¥çš„æ–‡ä»¶å¤¹
 	CFileFind finder;
-	//const char*×ª»»³ÉLPCTSTRÎÄ¼þ
-	//ÕâÀï±¾À´»ñÈ¡µÄÊÇÒ»¸öÎÄ¼þÂ·¾¶
-	//¸ù¾ÝÎÄ¼þÂ·¾¶ÕÒµ½ËùÔÚÄ¿Â¼
+	//const char*è½¬æ¢æˆLPCTSTRæ–‡ä»¶
+	//è¿™é‡Œæœ¬æ¥èŽ·å–çš„æ˜¯ä¸€ä¸ªæ–‡ä»¶è·¯å¾?
+	//æ ¹æ®æ–‡ä»¶è·¯å¾„æ‰¾åˆ°æ‰€åœ¨ç›®å½?
 	std::string strFilePathG = GetFileDirectory(strPath);
 	strFilePathG += "*.*";
 
@@ -94,15 +94,18 @@ void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath
 }
 
 
-//²éÕÒ×Ö·û´®
+//æŸ¥æ‰¾å­—ç¬¦ä¸?
 bool FindString(std::string strData, std::string strFilePath)
 {
-	//´ò¿ªÎÄ¼þ,²éÕÒ×Ö·û´®£¬¹Ø±ÕÎÄ¼þ·µ»ØÖµ
+	//æ‰“å¼€æ–‡ä»¶,æŸ¥æ‰¾å­—ç¬¦ä¸²ï¼Œå…³é—­æ–‡ä»¶è¿”å›žå€?
 	FILE* fp = fopen(strFilePath.c_str(), "rt");
 	if (fp == NULL)
+	{
+		//fclose(fp);  æ‰“å¼€æ–‡ä»¶å¤±è´¥æ—¶ä¸èƒ½å…³æ–‡ä»¶ï¼Œä¸èƒ½å’Œjavaä¸€æ ?
 		return false;
+	}
 
-	//²éÕÒ×Ö·û´®
+	//æŸ¥æ‰¾å­—ç¬¦ä¸?
 	char chValue[2048] = "";
 	while (!feof(fp))
 	{
@@ -120,13 +123,15 @@ bool FindString(std::string strData, std::string strFilePath)
 
 void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> arrSrcPath, std::string strStrFind)
 {
-	//²éÕÒ×Ö·û´®²¢½«´æÔÚÏàÓ¦×Ö·û´®µÄÎÄ¼þÐ´Èëµ½Ð´Èëµ½Ö¸¶¨×Ö·ûÊý×é
+	//æŸ¥æ‰¾å­—ç¬¦ä¸²å¹¶å°†å­˜åœ¨ç›¸åº”å­—ç¬¦ä¸²çš„æ–‡ä»¶å†™å…¥åˆ°å†™å…¥åˆ°æŒ‡å®šå­—ç¬¦æ•°ç»?
 	std::vector<std::string>::iterator iter = arrSrcPath.begin();
 	for (; iter != arrSrcPath.end(); iter++)
 	{
 		std::string strDif = "ÕýÔÚ½âÎö-->";
 		strDif += *iter;
-		::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)(strDif.c_str()));
+		char* chMsg = const_cast<char*>(strDif.c_str());
+		//CString strMsg = chMsg;
+		::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)(&chMsg));
 		if (FindString(strStrFind, iter->data()))
 		{
 			arrDesPath.push_back(iter->data());
