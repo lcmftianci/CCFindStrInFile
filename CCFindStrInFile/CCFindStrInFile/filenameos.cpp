@@ -15,13 +15,13 @@ std::string GetFileDirectory(std::string strFilePath)
 
 	_splitpath(strFilePath.c_str(), drive, dir, fname, ext);
 
-	//合成路径返回�?
+	//鍚堟垚璺緞杩斿洖鍘?
 	std::string strFileDir = drive;
 	strFileDir += dir;
 	return strFileDir;
 }
 
-//写入文件，保存桌面弹�?
+//鍐欏叆鏂囦欢锛屼繚瀛樻闈㈠脊鍑?
 int DisInFile(std::vector<std::string> arrSrcPath)
 {
 	TCHAR MyDir[_MAX_PATH];
@@ -56,14 +56,14 @@ int DisInFile(std::vector<std::string> arrSrcPath)
 	return (int)arrSrcPath.size();
 }
 
-//便利穿入的文件夹将所有文件路径输�?
+//渚垮埄绌垮叆鐨勬枃浠跺す灏嗘墍鏈夋枃浠惰矾寰勮緭鍑?
 void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath)
 {
-	//传入的文件夹
+	//浼犲叆鐨勬枃浠跺す
 	CFileFind finder;
-	//const char*转换成LPCTSTR文件
-	//这里本来获取的是一个文件路�?
-	//根据文件路径找到所在目�?
+	//const char*杞崲鎴怢PCTSTR鏂囦欢
+	//杩欓噷鏈潵鑾峰彇鐨勬槸涓�涓枃浠惰矾寰?
+	//鏍规嵁鏂囦欢璺緞鎵惧埌鎵�鍦ㄧ洰褰?
 	std::string strFilePathG = GetFileDirectory(strPath);
 	strFilePathG += "*.*";
 
@@ -85,6 +85,8 @@ void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath
 			std::string strs = W2A(str);
 			strs += "\\";
 			::SendMessage(theApp.GetMainWnd()->m_hWnd, MSG_SHOW_MSG, 0, (LPARAM)&str);
+			//::PostMessage(/*pDlg->m_hWnd*/theApp.GetMainWnd()->m_hWnd, WM_COMMAND, MAKEWPARAM(IDC_BUTTON_OPEN_VIDEO, BN_CLICKED), NULL);
+			//::SendMessage(theApp.GetMainWnd()->m_hWnd, WM_COMMAND, MAKEWPARAM(IDC_BUTTON_OPEN_VIDEO, BN_CLICKED), NULL);
 			ReverseDirectory(strs, arrFilepath);
 		}
 		CString strFilePath = finder.GetFilePath();
@@ -95,18 +97,18 @@ void ReverseDirectory(std::string strPath, std::vector<std::string>& arrFilepath
 }
 
 
-//查找字符�?
+//鏌ユ壘瀛楃涓?
 bool FindString(std::string strData, std::string strFilePath)
 {
-	//打开文件,查找字符串，关闭文件返回�?
+	//鎵撳紑鏂囦欢,鏌ユ壘瀛楃涓诧紝鍏抽棴鏂囦欢杩斿洖鍊?
 	FILE* fp = fopen(strFilePath.c_str(), "rt");
 	if (fp == NULL)
 	{
-		//fclose(fp);  打开文件失败时不能关文件，不能和java一�?
+		//fclose(fp);  鎵撳紑鏂囦欢澶辫触鏃朵笉鑳藉叧鏂囦欢锛屼笉鑳藉拰java涓�鏍?
 		return false;
 	}
 
-	//查找字符�?
+	//鏌ユ壘瀛楃涓?
 	char chValue[2048] = "";
 	while (!feof(fp))
 	{
@@ -124,7 +126,7 @@ bool FindString(std::string strData, std::string strFilePath)
 
 void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> arrSrcPath, std::string strStrFind)
 {
-	//查找字符串并将存在相应字符串的文件写入到写入到指定字符数�?
+	//鏌ユ壘瀛楃涓插苟灏嗗瓨鍦ㄧ浉搴斿瓧绗︿覆鐨勬枃浠跺啓鍏ュ埌鍐欏叆鍒版寚瀹氬瓧绗︽暟缁?
 	std::vector<std::string>::iterator iter = arrSrcPath.begin();
 	USES_CONVERSION;
 	char* chMsg;
@@ -132,8 +134,8 @@ void FindString(std::vector<std::string>& arrDesPath, std::vector<std::string> a
 	CString strMsg;
 	for (; iter != arrSrcPath.end(); iter++)
 	{
-		//���﷢����Ϣ�е����⣬���������Ǳ���
-		/*	strDif = "���ڽ���-->";
+		//这里发送消息有点问题，大量数据是崩溃
+		/*	strDif = "正在解析-->";
 			strDif += *iter;
 			chMsg = const_cast<char*>(strDif.c_str());
 			strMsg = A2W(chMsg);
